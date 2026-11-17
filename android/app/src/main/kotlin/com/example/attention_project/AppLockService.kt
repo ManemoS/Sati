@@ -43,6 +43,7 @@ class AppLockService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
         handler.post(poll)
+        LockSync.start(this)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {

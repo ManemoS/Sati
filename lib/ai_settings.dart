@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'cloud_ai.dart';
 import 'model_store.dart';
 import 'notes_ai.dart';
 import 'settings.dart';
@@ -83,7 +84,7 @@ class _AiSettingsState extends State<AiSettings> {
               child: SegmentedButton<String>(
                 segments: [
                   ButtonSegment(value: 'phone', icon: Icon(Icons.smartphone_rounded), label: Text('On this phone'.tr)),
-                  ButtonSegment(value: 'claude', icon: Icon(Icons.cloud_outlined), label: Text('Claude')),
+                  ButtonSegment(value: 'cloud', icon: Icon(Icons.cloud_outlined), label: Text('Online AI'.tr)),
                 ],
                 selected: {_settings.notesEngine},
                 onSelectionChanged: (value) => _settings.setNotesEngine(value.first),
@@ -112,11 +113,7 @@ class _AiSettingsState extends State<AiSettings> {
               ],
             )
           else
-            Text(
-              ('Claude writes better notes but needs internet, and the transcript is sent to Anthropic. '
-              'Add your API key below.').tr,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
+            const _CloudSettings(),
         ],
       ),
     );
@@ -272,6 +269,236 @@ class _OptionRow extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Picks which online AI writes notes, and holds its key and model.
+class _CloudSettings extends StatefulWidget {
+  const _CloudSettings();
+
+  @override
+  State<_CloudSettings> createState() => _CloudSettingsState();
+}
+
+class _CloudSettingsState extends State<_CloudSettings> {
+  final _settings = AppSettings.instance;
+
+  /// Whether each service is set up, and the model it will use. Null while loading.
+  Map<CloudProvider, ({bool ready, String model})>? _status;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final status = {
+      for (final p in CloudProvider.values) p: (ready: await CloudAi.isReady(p), model: await CloudAi.model(p)),
+    };
+    if (mounted) setState(() => _status = status);
+  }
+
+  Future<void> _edit(CloudProvider p) async {
+    await showCloudAiDialog(context, p);
+    await _load();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final current = CloudAi.current;
+    final status = _status?[current];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Panel(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconBadge(Icons.cloud_outlined, color: colors.tertiary),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      current == CloudProvider.custom
+                          ? 'Writes summaries online with your own API key. It needs internet, and the transcript is sent to the service you set up.'.tr
+                          : 'Writes summaries online with your own API key. It needs internet, and the transcript is sent to {company}.'
+                              .trf({'company': current.company}),
+                      style: textTheme.bodySmall,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              for (final p in CloudProvider.values)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Material(
+                    color: p == current ? colors.tertiary.withValues(alpha: 0.08) : Colors.transparent,
+                    borderRadius: BorderRadius.circular(16),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () => _settings.setCloudProvider(p.name),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                        child: Row(
+                          children: [
+                            Icon(
+                              p == current ? Icons.radio_button_checked_rounded : Icons.radio_button_unchecked_rounded,
+                              color: p == current ? colors.tertiary : colors.outline,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(p.displayName, style: textTheme.titleSmall),
+                                  Text(
+                                    p == CloudProvider.custom
+                                        ? 'OpenRouter, Groq, DeepSeek, Ollama and more'.tr
+                                        : 'By {company}'.trf({'company': p.company}),
+                                    style: textTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (_status?[p]?.ready ?? false)
+                              Icon(Icons.check_circle_rounded, size: 20, color: colors.secondary),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        Panel(
+          padding: EdgeInsets.zero,
+          onTap: () => _edit(current),
+          child: ListTile(
+            contentPadding: const EdgeInsets.fromLTRB(16, 4, 12, 4),
+            leading: IconBadge(Icons.key_rounded, color: colors.tertiary),
+            title: Text(current == CloudProvider.custom
+                ? 'Other AI service'.tr
+                : '{name} API key'.trf({'name': current.displayName})),
+            subtitle: Text(switch (status) {
+              null => 'Checking…'.tr,
+              (ready: true, :final model) => 'Saved on this phone · {model}'.trf({'model': model}),
+              _ => 'Not set · needed to summarize lectures'.tr,
+            }),
+            trailing: Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Lets the user enter the key, model (and for "Other", the address) of an online AI.
+/// Returns true if [p] is ready to use afterwards.
+Future<bool> showCloudAiDialog(BuildContext context, CloudProvider p) async {
+  final initial = (key: await CloudAi.apiKey(p), model: await CloudAi.model(p), url: await CloudAi.baseUrl());
+  if (!context.mounted) return false;
+  final result = await showDialog<({String key, String model, String url})>(
+    context: context,
+    builder: (_) => _CloudAiDialog(provider: p, apiKey: initial.key, model: initial.model, url: initial.url),
+  );
+  if (result != null) {
+    await CloudAi.setApiKey(p, result.key);
+    // Saving the default as blank keeps following it if the app's default changes later.
+    await CloudAi.setModel(p, result.model.trim() == p.defaultModel ? '' : result.model);
+    if (p == CloudProvider.custom) await CloudAi.setBaseUrl(result.url);
+  }
+  return CloudAi.isReady(p);
+}
+
+/// Owns its text fields, so they are only freed once the closing animation has finished.
+class _CloudAiDialog extends StatefulWidget {
+  const _CloudAiDialog({required this.provider, this.apiKey, required this.model, this.url});
+
+  final CloudProvider provider;
+  final String? apiKey;
+  final String model;
+  final String? url;
+
+  @override
+  State<_CloudAiDialog> createState() => _CloudAiDialogState();
+}
+
+class _CloudAiDialogState extends State<_CloudAiDialog> {
+  late final _key = TextEditingController(text: widget.apiKey);
+  late final _model = TextEditingController(text: widget.model);
+  late final _url = TextEditingController(text: widget.url);
+
+  @override
+  void dispose() {
+    _key.dispose();
+    _model.dispose();
+    _url.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = widget.provider;
+    final custom = p == CloudProvider.custom;
+    return AlertDialog(
+      title: Text(custom ? 'Other AI service'.tr : '{name} API key'.trf({'name': p.displayName})),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(p.keyHelp.tr),
+            if (custom) ...[
+              const SizedBox(height: 12),
+              TextField(
+                controller: _url,
+                keyboardType: TextInputType.url,
+                autocorrect: false,
+                decoration: InputDecoration(labelText: 'Address'.tr, hintText: 'https://openrouter.ai/api/v1'),
+              ),
+            ],
+            const SizedBox(height: 12),
+            TextField(
+              controller: _key,
+              autofocus: !custom,
+              obscureText: true,
+              autocorrect: false,
+              decoration: InputDecoration(
+                labelText: custom ? 'API key (if needed)'.tr : 'API key'.tr,
+                hintText: p.keyHint.isEmpty ? null : p.keyHint,
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _model,
+              autocorrect: false,
+              decoration: InputDecoration(
+                labelText: 'Model'.tr,
+                hintText: custom ? 'meta-llama/llama-3.3-70b-instruct' : p.defaultModel,
+                helperText: custom ? null : 'Leave as is unless you want a different model.'.tr,
+                helperMaxLines: 2,
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel'.tr)),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, (key: _key.text, model: _model.text, url: _url.text)),
+          child: Text('Save'.tr),
+        ),
+      ],
     );
   }
 }

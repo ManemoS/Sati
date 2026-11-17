@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'account.dart';
 import 'app_lock.dart';
 import 'app_picker_page.dart';
 import 'focus_stats.dart';
@@ -140,7 +141,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (_record && !await AppLock.requestMicPermission()) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(('Recording needs the microphone. Allow it in Settings → Apps → APLS → Permissions, '
+        content: Text(('Recording needs the microphone. Allow it in Settings → Apps → Sati → Permissions, '
             'or turn off "Record lecture".').tr),
       ));
       return;
@@ -170,41 +171,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Future<void> _stopWithCode() async {
-    final controller = TextEditingController();
-    final code = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        icon: Icon(Icons.key_rounded, color: Theme.of(context).colorScheme.primary),
-        title: Text('Enter your code'.tr),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('The code you chose when you started this session.'.tr, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            TextField(
-              controller: controller,
-              autofocus: true,
-              obscureText: true,
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              maxLength: 8,
-              style: tabular(Theme.of(context).textTheme.headlineSmall)?.copyWith(letterSpacing: 8),
-              decoration: const InputDecoration(hintText: '••••', counterText: ''),
-              onSubmitted: (value) => Navigator.pop(context, value),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel'.tr)),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: Text('End lock'.tr),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
+    final code = await showDialog<String>(context: context, builder: (_) => const _StopDialog());
     if (code == null || !mounted) return;
 
     final stopped = await AppLock.stop(code);
@@ -336,8 +303,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             ),
             const SizedBox(height: 12),
             Text(
-              ('APLS needs Accessibility access to see which app is open. In Settings, open '
-              '"Installed apps" (or "Downloaded apps"), tap APLS and turn it on.').tr,
+              ('Sati needs Accessibility access to see which app is open. In Settings, open '
+              '"Installed apps" (or "Downloaded apps"), tap Sati and turn it on.').tr,
               style: textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
             ),
             const SizedBox(height: 16),
@@ -877,6 +844,104 @@ class _CyclePreview extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Asks for the code that ends the lock, and offers to email a one-time code when signed in.
+/// Owns its text field, so it is only freed once the closing animation has finished.
+class _StopDialog extends StatefulWidget {
+  const _StopDialog();
+
+  @override
+  State<_StopDialog> createState() => _StopDialogState();
+}
+
+class _StopDialogState extends State<_StopDialog> {
+  final _controller = TextEditingController();
+  final _account = Account.instance;
+  bool _sending = false;
+  String? _sentTo;
+  String? _error;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _email() async {
+    setState(() {
+      _sending = true;
+      _error = null;
+    });
+    try {
+      await _account.emailUnlockCode();
+      if (mounted) setState(() => _sentTo = _account.email);
+    } on AccountException catch (e) {
+      if (mounted) setState(() => _error = e.message);
+    } finally {
+      if (mounted) setState(() => _sending = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return AlertDialog(
+      icon: Icon(Icons.key_rounded, color: colors.primary),
+      title: Text('Enter your code'.tr),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              _account.canEmailCode
+                  ? 'The code you chose when you started this session, or one emailed to you.'.tr
+                  : 'The code you chose when you started this session.'.tr,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _controller,
+              autofocus: true,
+              obscureText: true,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              maxLength: 8,
+              style: tabular(textTheme.headlineSmall)?.copyWith(letterSpacing: 8),
+              decoration: const InputDecoration(hintText: '••••', counterText: ''),
+              onSubmitted: (value) => Navigator.pop(context, value),
+            ),
+            if (_account.canEmailCode) ...[
+              const SizedBox(height: 12),
+              if (_sentTo != null)
+                Text(
+                  'Sent to {email}. The code works for {minutes} minutes.'
+                      .trf({'email': _sentTo, 'minutes': Account.rescueMinutes}),
+                  textAlign: TextAlign.center,
+                  style: textTheme.bodySmall?.copyWith(color: colors.secondary),
+                )
+              else
+                TextButton.icon(
+                  onPressed: _sending ? null : _email,
+                  icon: _sending
+                      ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Icon(Icons.mail_outline_rounded),
+                  label: Text('Forgot it? Email me a code'.tr),
+                ),
+              if (_error != null)
+                Text(_error!, textAlign: TextAlign.center, style: textTheme.bodySmall?.copyWith(color: colors.error)),
+            ],
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel'.tr)),
+        FilledButton(onPressed: () => Navigator.pop(context, _controller.text), child: Text('End lock'.tr)),
+      ],
     );
   }
 }

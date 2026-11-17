@@ -46,7 +46,7 @@ class FocusWidget : AppWidgetProvider() {
                 views.setChronometerCountDown(R.id.widget_countdown, true)
                 views.setTextViewText(R.id.widget_detail, if (phase.locked) Lang.t(context, "until your apps open", "จนกว่าแอปจะเปิด") else Lang.t(context, "until your apps lock", "จนกว่าแอปจะล็อก"))
             } else {
-                views.setTextViewText(R.id.widget_label, "APLS")
+                views.setTextViewText(R.id.widget_label, "Sati")
                 views.setTextColor(R.id.widget_label, AMBER)
                 views.setInt(R.id.widget_icon, "setColorFilter", AMBER)
                 views.setChronometer(R.id.widget_countdown, SystemClock.elapsedRealtime(), null, false)

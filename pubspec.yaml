@@ -1,4 +1,4 @@
-﻿name: attention_project
+name: attention_project
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -41,6 +41,10 @@ dependencies:
   flutter_gemma: 0.12.6
   whisper_ggml: 2.9.0
   ffmpeg_kit_flutter_new_min: 2.1.0
+  firebase_core: ^5.1.0
+  firebase_auth: ^7.0.1
+  cloud_firestore: ^7.1.0
+  google_sign_in: ^7.2.0
 
 dev_dependencies:
   flutter_test:
@@ -58,8 +62,11 @@ dev_dependencies:
 #   flutter pub get
 #   dart run flutter_launcher_icons
 flutter_launcher_icons:
-  image_path: "assets/icon/Angrybird.png"
+  image_path: "assets/icon/apls_icon.png"
   android: true
+  # Android masks icons to a circle/squircle showing only the centre, so it gets a padded copy.
+  adaptive_icon_background: "assets/icon/apls_icon_adaptive_bg.png"
+  adaptive_icon_foreground: "assets/icon/transparent.png"
   ios: true
   remove_alpha_ios: true
   web:

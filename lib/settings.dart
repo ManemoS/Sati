@@ -29,6 +29,7 @@ class AppSettings extends ChangeNotifier {
   static const _speechKey = 'speech_model';
   static const _notesModelKey = 'notes_model';
   static const _notesEngineKey = 'notes_engine';
+  static const _cloudProviderKey = 'cloud_provider';
   static const _languageKey = 'app_language';
 
   /// 'system', 'en' or 'th'. LockActivity.kt and the notifications read this too.
@@ -57,12 +58,17 @@ class AppSettings extends ChangeNotifier {
   /// Which on-phone model writes notes (see notes_ai.dart): 'standard' or 'light'.
   String notesModel = 'standard';
 
-  /// Where notes are written: 'phone' (offline, private) or 'claude' (online, needs an API key).
+  /// Where notes are written: 'phone' (offline, private) or 'cloud' (online, needs an API key).
   String notesEngine = 'phone';
+
+  /// Which online AI writes notes when [notesEngine] is 'cloud' (see cloud_ai.dart):
+  /// 'claude', 'openai', 'gemini' or 'custom'.
+  String cloudProvider = 'claude';
 
   Future<void> setSpeechModel(String value) => _setString(_speechKey, value, () => speechModel = value);
   Future<void> setNotesModel(String value) => _setString(_notesModelKey, value, () => notesModel = value);
   Future<void> setNotesEngine(String value) => _setString(_notesEngineKey, value, () => notesEngine = value);
+  Future<void> setCloudProvider(String value) => _setString(_cloudProviderKey, value, () => cloudProvider = value);
 
   Future<void> _setString(String key, String value, void Function() apply) async {
     apply();
@@ -89,7 +95,10 @@ class AppSettings extends ChangeNotifier {
     buzzBeforeEnd = prefs.getBool(_buzzKey) ?? true;
     speechModel = prefs.getString(_speechKey) ?? 'fast';
     notesModel = prefs.getString(_notesModelKey) ?? 'standard';
-    notesEngine = prefs.getString(_notesEngineKey) ?? 'phone';
+    // Before other online services were added, the only online choice was saved as 'claude'.
+    final engine = prefs.getString(_notesEngineKey) ?? 'phone';
+    notesEngine = engine == 'claude' ? 'cloud' : engine;
+    cloudProvider = prefs.getString(_cloudProviderKey) ?? 'claude';
     language = prefs.getString(_languageKey) ?? 'system';
     notifyListeners();
   }

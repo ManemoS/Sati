@@ -23,6 +23,9 @@ Pill finishPill(BuildContext context, ClassRun run) {
       : Pill(label: '{n} min over'.trf(n), color: colors.error, icon: Icons.schedule_rounded);
 }
 
+/// Longest one lesson-plan segment can be.
+const int maxSegmentMinutes = 120;
+
 /// Lists the professor's lesson plans and past classes.
 class LessonPlansPage extends StatefulWidget {
   const LessonPlansPage({super.key});
@@ -418,9 +421,9 @@ class _PlanEditorPageState extends State<PlanEditorPage> {
     if (_rows.any((row) => row.title.text.trim().isEmpty)) return 'Every segment needs a title.'.tr;
     final allValid = _rows.every((row) {
       final minutes = row.parsedMinutes;
-      return minutes != null && minutes >= 1 && minutes <= maxMinutes;
+      return minutes != null && minutes >= 1 && minutes <= maxSegmentMinutes;
     });
-    if (!allValid) return 'Each segment must be 1–{max} minutes.'.trf({'max': maxMinutes});
+    if (!allValid) return 'Each segment must be 1–{max} minutes.'.trf({'max': maxSegmentMinutes});
     return null;
   }
 

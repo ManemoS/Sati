@@ -6,7 +6,7 @@ void main() {
     expect(formatMinutes(45), '45 min');
     expect(formatMinutes(60), '1 h');
     expect(formatMinutes(90), '1 h 30 min');
-    expect(formatMinutes(maxMinutes), '2 h');
+    expect(formatMinutes(maxMinutes), '3 h');
   });
 
   test('formatCountdown rounds up to the next second', () {

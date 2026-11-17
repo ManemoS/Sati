@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'account_panel.dart';
 import 'ai_settings.dart';
 import 'backup.dart';
-import 'lectures.dart';
-import 'lectures_page.dart';
 import 'lesson_plan.dart';
 import 'settings.dart';
 import 'theme.dart';
@@ -162,7 +161,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
               ),
             ),
-            Text('Welcome to APLS'.tr, textAlign: TextAlign.center, style: textTheme.headlineLarge),
+            Text('Welcome to Sati'.tr, textAlign: TextAlign.center, style: textTheme.headlineLarge),
             const SizedBox(height: 10),
             Text(
               'Fewer distractions in class, better notes after it. How will you use it?'.tr,
@@ -189,20 +188,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool? _hasApiKey;
-
   AppSettings get _settings => AppSettings.instance;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkApiKey();
-  }
-
-  Future<void> _checkApiKey() async {
-    final key = await Claude.apiKey();
-    if (mounted) setState(() => _hasApiKey = key != null);
-  }
 
   Future<void> _chooseRole(UserRole role) async {
     if (role == _settings.role) return;
@@ -226,11 +212,6 @@ class _SettingsPageState extends State<SettingsPage> {
     await _settings.setRole(role);
   }
 
-  Future<void> _editApiKey() async {
-    await showApiKeyDialog(context);
-    await _checkApiKey();
-  }
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -246,6 +227,7 @@ class _SettingsPageState extends State<SettingsPage> {
               RoleCard(role: role, selected: _settings.role == role, onTap: () => _chooseRole(role)),
               const SizedBox(height: 12),
             ],
+            const AccountPanel(),
             SectionLabel('Appearance'.tr, padding: EdgeInsets.fromLTRB(4, 12, 4, 10)),
             Row(
               children: [
@@ -309,30 +291,12 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ],
             const AiSettings(),
-            if (_settings.notesEngine == 'claude') ...[
-              const SizedBox(height: 12),
-              Panel(
-                padding: EdgeInsets.zero,
-                onTap: _editApiKey,
-                child: ListTile(
-                  contentPadding: const EdgeInsets.fromLTRB(16, 4, 12, 4),
-                  leading: IconBadge(Icons.key_rounded, color: colors.tertiary),
-                  title: Text('Claude API key'.tr),
-                  subtitle: Text(switch (_hasApiKey) {
-                    null => 'Checking…'.tr,
-                    true => 'Saved on this phone · used to summarize lectures'.tr,
-                    false => 'Not set · needed to summarize lectures'.tr,
-                  }),
-                  trailing: Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
-                ),
-              ),
-            ],
             SectionLabel('Backup'.tr),
             const _BackupPanel(),
             SectionLabel('About'.tr),
             Panel(
               padding: EdgeInsets.zero,
-              onTap: () => showLicensePage(context: context, applicationName: 'APLS'),
+              onTap: () => showLicensePage(context: context, applicationName: 'Sati'),
               child: ListTile(
                 contentPadding: const EdgeInsets.fromLTRB(16, 4, 12, 4),
                 leading: IconBadge(Icons.description_outlined, color: colors.onSurfaceVariant),

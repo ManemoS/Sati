@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'l10n.dart';
 
 /// Longest a lock or unlock period can be set to.
-const int maxMinutes = 120;
+const int maxMinutes = 180;
 
 class InstalledApp {
   const InstalledApp({required this.packageName, required this.name, this.icon});
@@ -136,6 +136,10 @@ class AppLock {
   /// Ends the session. Returns false if [code] is wrong.
   static Future<bool> stop(String code) async =>
       await _channel.invokeMethod<bool>('stopSession', {'code': code}) ?? false;
+
+  /// Makes a one-time code that ends the running lock for 30 minutes, on every device signed in
+  /// to the same account (see LockState.newRescueCode). Null if no lock is running.
+  static Future<String?> newRescueCode() => _channel.invokeMethod<String>('newRescueCode');
 
   /// Shows the current lesson segment in a notification and buzzes at [dueAt] (see
   /// ClassTimerService.kt). Starts the service if needed; call again when the segment changes.

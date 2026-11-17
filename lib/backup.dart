@@ -21,12 +21,10 @@ class BackupException implements Exception {
 class AppBackup {
   static const _channel = MethodChannel('attention_project/app_lock');
 
-  /// Never written into a backup file.
-  static const _secretKeys = {'claude_api_key'};
-
-  /// Left out of backups: secrets, and the AI plugin's own records of which model files are on
-  /// this phone, which would be wrong on another phone.
-  static bool _skip(String key) => _secretKeys.contains(key) || key.startsWith('model_');
+  /// Left out of backups: API keys for the online AIs (all end in '_api_key'), and the AI
+  /// plugin's own records of which model files are on this phone, which would be wrong on
+  /// another phone.
+  static bool _skip(String key) => key.endsWith('_api_key') || key.startsWith('model_');
 
   /// Every app setting as typed JSON, leaving out secrets.
   static Future<String> settingsJson() async {
@@ -79,7 +77,7 @@ class AppBackup {
       return await _channel.invokeMethod<bool>('createBackup', {
             'settings': await settingsJson(),
             'includeAudio': includeAudio,
-            'fileName': 'APLS backup ${now.year}-${two(now.month)}-${two(now.day)}.zip',
+            'fileName': 'Sati backup ${now.year}-${two(now.month)}-${two(now.day)}.zip',
           }) ??
           false;
     } on PlatformException catch (e) {

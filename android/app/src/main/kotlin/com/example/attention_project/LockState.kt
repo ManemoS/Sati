@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import org.json.JSONArray
 import org.json.JSONObject
 import java.security.MessageDigest
+import java.security.SecureRandom
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -18,7 +19,7 @@ import java.util.Locale
  * Finished sessions and blocked app opens are kept too, for the Focus stats.
  */
 object LockState {
-    const val MAX_MINUTES = 120
+    const val MAX_MINUTES = 180
 
     /**
      * Blocked as well during a strict session's locked time, so the lock can't be undone by
@@ -42,7 +43,12 @@ object LockState {
     private const val KEY_START_MILLIS = "startMillis"
     private const val KEY_CODE_HASH = "codeHash"
     private const val KEY_HISTORY = "history"
+    private const val KEY_RESCUE_HASH = "rescueHash"
+    private const val KEY_RESCUE_UNTIL = "rescueUntil"
     private const val KEY_BLOCKED = "blocked"
+
+    /** How long an emailed unlock code works. */
+    const val RESCUE_MINUTES = 30
 
     /** Enough for a few months of daily sessions. */
     private const val MAX_HISTORY = 400
@@ -68,6 +74,10 @@ object LockState {
     /** When the current (or most recent) session started. */
     fun startMillis(context: Context) = prefs(context).getLong(KEY_START_MILLIS, 0L)
 
+    fun codeHash(context: Context): String? = prefs(context).getString(KEY_CODE_HASH, null)
+    fun rescueHash(context: Context): String? = prefs(context).getString(KEY_RESCUE_HASH, null)
+    fun rescueUntil(context: Context) = prefs(context).getLong(KEY_RESCUE_UNTIL, 0L)
+
     fun start(
         context: Context,
         packages: Set<String>,
@@ -91,6 +101,8 @@ object LockState {
         record: Boolean,
         codeHash: String,
         strict: Boolean = false,
+        startMillis: Long = System.currentTimeMillis(),
+        sync: Boolean = true,
     ) {
         prefs(context).edit()
             .putStringSet(KEY_PACKAGES, HashSet(packages))
@@ -101,17 +113,61 @@ object LockState {
             .putBoolean(KEY_RECORD, record)
             .putBoolean(KEY_STRICT, strict)
             .putString(KEY_CODE_HASH, codeHash)
-            .putLong(KEY_START_MILLIS, System.currentTimeMillis())
+            .remove(KEY_RESCUE_HASH)
+            .remove(KEY_RESCUE_UNTIL)
+            .putLong(KEY_START_MILLIS, startMillis)
             .putBoolean(KEY_ACTIVE, true)
             .apply()
         FocusWidget.update(context)
+        if (sync) LockSync.push(context)
+    }
+
+    /** Starts the session another of the user's devices started (see LockSync). */
+    fun applyRemote(
+        context: Context,
+        packages: Set<String>,
+        lockMinutes: Int,
+        unlockMinutes: Int,
+        startLocked: Boolean,
+        repeat: Boolean,
+        strict: Boolean,
+        codeHash: String,
+        startMillis: Long,
+    ) = startWithHash(
+        context, packages, lockMinutes, unlockMinutes, startLocked, repeat,
+        record = false, codeHash = codeHash, strict = strict, startMillis = startMillis, sync = false,
+    )
+
+    /** Ends the session because another device ended it. */
+    fun endRemote(context: Context) {
+        if (isActive(context)) end(context, System.currentTimeMillis(), sync = false)
+    }
+
+    /**
+     * Makes a one-time code that ends the running session for [RESCUE_MINUTES], for when the
+     * user can't use their own code. Only its hash is kept. Null if no session is running.
+     */
+    fun newRescueCode(context: Context): String? {
+        if (!isActive(context)) return null
+        val random = SecureRandom()
+        val code = (1..8).joinToString("") { random.nextInt(10).toString() }
+        setRescue(context, hash(code), System.currentTimeMillis() + RESCUE_MINUTES * 60_000L)
+        LockSync.push(context)
+        return code
+    }
+
+    /** Accepts a rescue code made on this or another device. */
+    fun setRescue(context: Context, hash: String?, until: Long) {
+        prefs(context).edit().putString(KEY_RESCUE_HASH, hash).putLong(KEY_RESCUE_UNTIL, until).apply()
     }
 
     /** Ends the session if [code] matches. Returns false for a wrong code. */
     fun stop(context: Context, code: String): Boolean {
         val p = prefs(context)
         if (!p.getBoolean(KEY_ACTIVE, false)) return true
-        if (hash(code) != p.getString(KEY_CODE_HASH, null)) return false
+        val h = hash(code)
+        val rescue = h == p.getString(KEY_RESCUE_HASH, null) && System.currentTimeMillis() < p.getLong(KEY_RESCUE_UNTIL, 0L)
+        if (h != p.getString(KEY_CODE_HASH, null) && !rescue) return false
         end(context, System.currentTimeMillis())
         return true
     }
@@ -149,7 +205,7 @@ object LockState {
     }
 
     /** Ends the session as of [endMillis] and adds it to the history. */
-    private fun end(context: Context, endMillis: Long) {
+    private fun end(context: Context, endMillis: Long, sync: Boolean = true) {
         val p = prefs(context)
         val session = JSONObject()
             .put("start", p.getLong(KEY_START_MILLIS, 0L))
@@ -163,9 +219,12 @@ object LockState {
         p.edit()
             .putBoolean(KEY_ACTIVE, false)
             .remove(KEY_CODE_HASH)
+            .remove(KEY_RESCUE_HASH)
+            .remove(KEY_RESCUE_UNTIL)
             .putString(KEY_HISTORY, history.toString())
             .apply()
         FocusWidget.update(context)
+        if (sync) LockSync.push(context)
     }
 
     /** Finished sessions, oldest first, as JSON objects. */

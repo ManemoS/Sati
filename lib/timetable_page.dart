@@ -148,7 +148,7 @@ class _TimetablePageState extends State<TimetablePage> with WidgetsBindingObserv
                             Text(
                               widget.packages.isEmpty
                                   ? 'Choose apps on the Focus tab first.'.tr
-                                  : 'Locks the {apps} chosen on the Focus tab, for up to 2 hours of each class.'.trf({
+                                  : 'Locks the {apps} chosen on the Focus tab, for up to 3 hours of each class.'.trf({
                                       'apps': widget.packages.length == 1
                                           ? 'app'.tr
                                           : '{n} apps'.trf({'n': widget.packages.length}),
@@ -186,7 +186,7 @@ class _TimetablePageState extends State<TimetablePage> with WidgetsBindingObserv
                         Text('Locks may start a few minutes late'.tr, style: textTheme.titleSmall),
                         const SizedBox(height: 4),
                         Text(
-                          'Allow APLS to set exact alarms so the lock starts right on time.'.tr,
+                          'Allow Sati to set exact alarms so the lock starts right on time.'.tr,
                           style: textTheme.bodySmall,
                         ),
                         const SizedBox(height: 10),
@@ -228,7 +228,7 @@ class _TimetablePageState extends State<TimetablePage> with WidgetsBindingObserv
                   EmptyState(
                     icon: Icons.calendar_month_rounded,
                     title: 'Add your classes'.tr,
-                    message: ('Enter each weekly class once. APLS locks your apps when it starts and offers to '
+                    message: ('Enter each weekly class once. Sati locks your apps when it starts and offers to '
                         'record the lecture into that course\'s folder.').tr,
                   )
                 else

@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'app_lock.dart';
+import 'ai_settings.dart';
 import 'ask_page.dart';
+import 'cloud_ai.dart';
 import 'lectures.dart';
 import 'model_store.dart';
 import 'notes_ai.dart';
@@ -36,41 +38,6 @@ String _formatDate(BuildContext context, DateTime date) {
 }
 
 String _recordings(int n) => n == 1 ? '1 recording'.tr : '{n} recordings'.trf({'n': n});
-
-/// Lets the user enter or change their Claude API key. Returns true if a key was saved.
-Future<bool> showApiKeyDialog(BuildContext context) async {
-  final controller = TextEditingController(text: await Claude.apiKey());
-  if (!context.mounted) return false;
-  final key = await showDialog<String>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Claude API key'.tr),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(('Create a key at console.anthropic.com under "API keys", then paste it here. '
-              'It stays on this phone.').tr),
-          const SizedBox(height: 12),
-          TextField(
-            controller: controller,
-            autofocus: true,
-            obscureText: true,
-            decoration: InputDecoration(labelText: 'API key'.tr, hintText: 'sk-ant-...'),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel'.tr)),
-        FilledButton(onPressed: () => Navigator.pop(context, controller.text), child: Text('Save'.tr)),
-      ],
-    ),
-  );
-  controller.dispose();
-  if (key == null || key.trim().isEmpty) return false;
-  await Claude.setApiKey(key);
-  return true;
-}
 
 void _showSnack(BuildContext context, String message) => ScaffoldMessenger.of(context)
   ..hideCurrentSnackBar()
@@ -468,7 +435,6 @@ class _LecturesPageState extends State<LecturesPage> {
       appBar: AppBar(
         title: Text('Lecture notes'.tr),
         actions: [
-          // The Claude API key lives in Settings now.
           const SettingsButton(),
           const SizedBox(width: 8),
         ],
@@ -909,14 +875,15 @@ class _LecturePageState extends State<LecturePage> {
 
   Future<void> _summarize() async {
     final transcript = await _lecture.readTranscript();
-    if (AppSettings.instance.notesEngine == 'claude') {
-      if (await Claude.apiKey() == null) {
-        if (!mounted || !await showApiKeyDialog(context)) return;
+    if (AppSettings.instance.notesEngine == 'cloud') {
+      final provider = CloudAi.current;
+      if (!await CloudAi.isReady(provider)) {
+        if (!mounted || !await showCloudAiDialog(context, provider)) return;
       }
       await _run(_Job.summarizing, () async {
-        _onProgress(0.3, 'Claude is summarizing… this can take a minute.'.tr);
+        _onProgress(0.3, '{name} is summarizing… this can take a minute.'.trf({'name': provider.displayName}));
         try {
-          await _lecture.saveSummary(await Claude.summarize(transcript));
+          await _lecture.saveSummary(await CloudAi.summarize(transcript));
         } on SummaryException catch (e) {
           throw Exception(e.message);
         }
@@ -1184,7 +1151,9 @@ class _LecturePageState extends State<LecturePage> {
           onPressed: _summarize,
           icon: const Icon(Icons.auto_awesome_rounded),
           label: Text(summary == null
-              ? (AppSettings.instance.notesEngine == 'claude' ? 'Summarize with Claude'.tr : 'Summarize on this phone'.tr)
+              ? (AppSettings.instance.notesEngine == 'cloud'
+                  ? 'Summarize with {name}'.trf({'name': CloudAi.current.displayName})
+                  : 'Summarize on this phone'.tr)
               : 'Summarize again'.tr),
         ),
         const SizedBox(height: 12),

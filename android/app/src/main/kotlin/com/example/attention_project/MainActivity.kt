@@ -66,8 +66,11 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        LockSync.start(this)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
+                "newRescueCode" -> result.success(LockState.newRescueCode(this))
+
                 "getInstalledApps" -> Thread {
                     val apps = installedApps()
                     runOnUiThread { result.success(apps) }
@@ -147,7 +150,7 @@ class MainActivity : FlutterActivity() {
                 "createBackup" -> {
                     val settings = call.argument<String>("settings") ?: "{}"
                     val includeAudio = call.argument<Boolean>("includeAudio") ?: false
-                    val name = call.argument<String>("fileName") ?: "APLS backup.zip"
+                    val name = call.argument<String>("fileName") ?: "Sati backup.zip"
                     Thread {
                         try {
                             val zip = Backup.create(this, settings, includeAudio)

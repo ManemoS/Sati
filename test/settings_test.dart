@@ -49,7 +49,7 @@ void main() {
     await tester.pumpWidget(const AppLockApp());
     await tester.pump();
 
-    expect(find.text('Welcome to APLS'), findsOneWidget);
+    expect(find.text('Welcome to Sati'), findsOneWidget);
     expect(find.byType(NavigationBar), findsNothing);
     expect(tester.widget<FilledButton>(find.byType(FilledButton)).onPressed, isNull, reason: 'nothing chosen yet');
 
@@ -69,7 +69,7 @@ void main() {
     await tester.pumpWidget(const AppLockApp());
     await tester.pump();
 
-    expect(find.text('Welcome to APLS'), findsNothing);
+    expect(find.text('Welcome to Sati'), findsNothing);
     expect(tabs(tester), ['Focus', 'Notes']);
     await close(tester);
   });

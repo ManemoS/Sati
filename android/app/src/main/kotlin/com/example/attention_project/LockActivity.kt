@@ -226,7 +226,7 @@ class LockActivity : Activity() {
         }
 
         val brand = text(12f, AMBER, bodyBold).apply {
-            text = "APLS · FOCUS"
+            text = "SATI · FOCUS"
             letterSpacing = 0.24f
         }
         column.addView(brand, matchWidth(8))

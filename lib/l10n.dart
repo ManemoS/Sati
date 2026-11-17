@@ -41,7 +41,7 @@ const _th = <String, String>{
   'Today': 'วันนี้',
 
   // Welcome and roles
-  'Welcome to APLS': 'ยินดีต้อนรับสู่ APLS',
+  'Welcome to Sati': 'ยินดีต้อนรับสู่ Sati',
   'Fewer distractions in class, better notes after it. How will you use it?':
       'ไม่วอกแวกในคลาส ได้โน้ตดีๆ หลังเรียน คุณจะใช้แอปนี้แบบไหน?',
   'You can change this any time in Settings.': 'เปลี่ยนได้ทุกเมื่อในการตั้งค่า',
@@ -60,8 +60,8 @@ const _th = <String, String>{
   'Close the apps that pull you away, on a rhythm that suits you.':
       'ปิดแอปที่ดึงความสนใจ ตามจังหวะที่เหมาะกับคุณ',
   'One-time setup': 'ตั้งค่าครั้งเดียว',
-  'APLS needs Accessibility access to see which app is open. In Settings, open "Installed apps" (or "Downloaded apps"), tap APLS and turn it on.':
-      'APLS ต้องใช้สิทธิ์การช่วยเหลือพิเศษเพื่อดูว่ากำลังเปิดแอปไหนอยู่ ในการตั้งค่า ให้เปิด "แอปที่ติดตั้ง" (หรือ "แอปที่ดาวน์โหลด") แตะ APLS แล้วเปิดใช้',
+  'Sati needs Accessibility access to see which app is open. In Settings, open "Installed apps" (or "Downloaded apps"), tap Sati and turn it on.':
+      'Sati ต้องใช้สิทธิ์การช่วยเหลือพิเศษเพื่อดูว่ากำลังเปิดแอปไหนอยู่ ในการตั้งค่า ให้เปิด "แอปที่ติดตั้ง" (หรือ "แอปที่ดาวน์โหลด") แตะ Sati แล้วเปิดใช้',
   'Open Accessibility settings': 'เปิดการตั้งค่าการช่วยเหลือพิเศษ',
   'Lock apps by themselves when each class starts': 'ล็อกแอปให้เองเมื่อแต่ละคลาสเริ่ม',
   'Next: {course}, {day} {time}': 'ถัดไป: {course} {day} {time}',
@@ -105,8 +105,8 @@ const _th = <String, String>{
   'Turn on Accessibility access first.': 'เปิดสิทธิ์การช่วยเหลือพิเศษก่อน',
   'Choose at least one app.': 'เลือกอย่างน้อยหนึ่งแอป',
   'Start session': 'เริ่มเซสชัน',
-  'Recording needs the microphone. Allow it in Settings → Apps → APLS → Permissions, or turn off "Record lecture".':
-      'การอัดเสียงต้องใช้ไมโครโฟน อนุญาตได้ที่ การตั้งค่า → แอป → APLS → สิทธิ์ หรือปิด "อัดเสียงการบรรยาย"',
+  'Recording needs the microphone. Allow it in Settings → Apps → Sati → Permissions, or turn off "Record lecture".':
+      'การอัดเสียงต้องใช้ไมโครโฟน อนุญาตได้ที่ การตั้งค่า → แอป → Sati → สิทธิ์ หรือปิด "อัดเสียงการบรรยาย"',
 
   // Focus: running
   'until the session ends': 'จนจบเซสชัน',
@@ -168,12 +168,12 @@ const _th = <String, String>{
   'Add class': 'เพิ่มคลาส',
   'Lock apps in class': 'ล็อกแอปตอนเรียน',
   'Choose apps on the Focus tab first.': 'เลือกแอปที่แท็บโฟกัสก่อน',
-  'Locks the {apps} chosen on the Focus tab, for up to 2 hours of each class.':
-      'ล็อก{apps}ที่เลือกในแท็บโฟกัส นานสูงสุด 2 ชั่วโมงต่อคลาส',
+  'Locks the {apps} chosen on the Focus tab, for up to 3 hours of each class.':
+      'ล็อก{apps}ที่เลือกในแท็บโฟกัส นานสูงสุด 3 ชั่วโมงต่อคลาส',
   'app': 'แอป',
   'Next: {course} · {day} {time}': 'ถัดไป: {course} · {day} {time}',
   'Locks may start a few minutes late': 'การล็อกอาจเริ่มช้าไปไม่กี่นาที',
-  'Allow APLS to set exact alarms so the lock starts right on time.': 'อนุญาตให้ APLS ตั้งนาฬิกาปลุกแบบตรงเวลา เพื่อให้ล็อกเริ่มตรงเวลา',
+  'Allow Sati to set exact alarms so the lock starts right on time.': 'อนุญาตให้ Sati ตั้งนาฬิกาปลุกแบบตรงเวลา เพื่อให้ล็อกเริ่มตรงเวลา',
   'Allow exact alarms': 'อนุญาตนาฬิกาปลุกแบบตรงเวลา',
   'Change code': 'เปลี่ยนรหัส',
   'Class code': 'รหัสคลาส',
@@ -182,8 +182,8 @@ const _th = <String, String>{
       'เหมือนรหัสโฟกัส: ใส่ที่หน้าจอล็อกเพื่อปลดล็อกคลาสก่อนเวลา',
   'Save new code': 'บันทึกรหัสใหม่',
   'Add your classes': 'เพิ่มคลาสของคุณ',
-  "Enter each weekly class once. APLS locks your apps when it starts and offers to record the lecture into that course's folder.":
-      'ใส่แต่ละคลาสในสัปดาห์ครั้งเดียว APLS จะล็อกแอปเมื่อคลาสเริ่ม และเสนอให้อัดเสียงเก็บในโฟลเดอร์ของวิชานั้น',
+  "Enter each weekly class once. Sati locks your apps when it starts and offers to record the lecture into that course's folder.":
+      'ใส่แต่ละคลาสในสัปดาห์ครั้งเดียว Sati จะล็อกแอปเมื่อคลาสเริ่ม และเสนอให้อัดเสียงเก็บในโฟลเดอร์ของวิชานั้น',
   'Offers to record': 'เสนอให้อัดเสียง',
   'A class that starts while another lock is running leaves that lock as it is.': 'ถ้าคลาสเริ่มตอนที่ล็อกอื่นยังทำงานอยู่ จะไม่เปลี่ยนล็อกนั้น',
   'Edit class': 'แก้ไขคลาส',
@@ -285,7 +285,6 @@ const _th = <String, String>{
   'notes AI': 'AI ทำโน้ต',
   'Downloading the {what}…': 'กำลังดาวน์โหลด{what}…',
   'Transcribing on this phone…': 'กำลังถอดเสียงบนมือถือ…',
-  'Claude is summarizing… this can take a minute.': 'Claude กำลังสรุป… อาจใช้เวลาสักครู่',
   'Starting the notes AI…': 'กำลังเริ่ม AI ทำโน้ต…',
   'Writing flashcards…': 'กำลังเขียนแฟลชการ์ด…',
   'Reading part {n} of {total}…': 'กำลังอ่านส่วนที่ {n} จาก {total}…',
@@ -300,7 +299,6 @@ const _th = <String, String>{
   'Transcribe on this phone': 'ถอดเสียงบนมือถือ',
   'Carry on transcribing ({n}% done)': 'ถอดเสียงต่อ (เสร็จแล้ว {n}%)',
   'Summary': 'สรุป',
-  'Summarize with Claude': 'สรุปด้วย Claude',
   'Summarize on this phone': 'สรุปบนมือถือ',
   'Summarize again': 'สรุปอีกครั้ง',
   'Make flashcards': 'ทำแฟลชการ์ด',
@@ -443,8 +441,6 @@ const _th = <String, String>{
   'On this phone': 'บนมือถือ',
   'Writes summaries and flashcards, and answers questions about your lectures, offline. Everything stays on this phone.':
       'เขียนสรุปและแฟลชการ์ด และตอบคำถามเรื่องการบรรยายแบบออฟไลน์ ทุกอย่างอยู่บนมือถือเครื่องนี้',
-  'Claude writes better notes but needs internet, and the transcript is sent to Anthropic. Add your API key below.':
-      'Claude เขียนโน้ตได้ดีกว่า แต่ต้องใช้อินเทอร์เน็ต และบันทึกคำพูดจะถูกส่งไปที่ Anthropic ใส่ API key ด้านล่าง',
   'Fast': 'เร็ว',
   'Quicker. Fine when the lecturer is clear and close.': 'เร็วกว่า เหมาะเมื่อผู้สอนพูดชัดและอยู่ใกล้',
   'Accurate': 'แม่นยำ',
@@ -459,9 +455,7 @@ const _th = <String, String>{
   'Delete from phone': 'ลบจากมือถือ',
   'Keep the app open until it finishes.': 'เปิดแอปค้างไว้จนเสร็จ',
   'Not downloaded': 'ยังไม่ได้ดาวน์โหลด',
-  'Claude API key': 'Claude API key',
   'Checking…': 'กำลังตรวจสอบ…',
-  'Saved on this phone · used to summarize lectures': 'บันทึกบนมือถือแล้ว · ใช้สรุปการบรรยาย',
   'Not set · needed to summarize lectures': 'ยังไม่ได้ตั้ง · ต้องใช้เพื่อสรุปการบรรยาย',
   'Create a key at console.anthropic.com under "API keys", then paste it here. It stays on this phone.':
       'สร้าง key ที่ console.anthropic.com ในหัวข้อ "API keys" แล้ววางที่นี่ key จะอยู่บนมือถือเครื่องนี้เท่านั้น',
@@ -498,14 +492,136 @@ const _th = <String, String>{
   "The AI didn't write any flashcards. Try again.": 'AI ไม่ได้เขียนแฟลชการ์ด ลองอีกครั้ง',
   'The download failed: {error}': 'ดาวน์โหลดไม่สำเร็จ: {error}',
   "The notes AI couldn't start on this phone ({error}). Try the Compact model.": 'AI ทำโน้ตเริ่มบนมือถือนี้ไม่ได้ ({error}) ลองโมเดลแบบกะทัดรัด',
-  'Add your Claude API key first.': 'ใส่ Claude API key ก่อน',
   'No internet connection. Connect and try again.': 'ไม่มีอินเทอร์เน็ต เชื่อมต่อแล้วลองอีกครั้ง',
-  'Claude took too long to answer. Try again.': 'Claude ตอบช้าเกินไป ลองอีกครั้ง',
-  'Your Claude API key is not valid. Check it in Lecture notes → API key.': 'Claude API key ไม่ถูกต้อง ตรวจสอบในการตั้งค่า',
   'Too many requests. Wait a minute and try again.': 'ส่งคำขอมากเกินไป รอสักครู่แล้วลองอีกครั้ง',
-  'Claude is busy right now. Try again in a minute.': 'Claude ไม่ว่างตอนนี้ ลองอีกครั้งในอีกสักครู่',
-  'Claude declined to summarize this recording.': 'Claude ไม่สรุปเสียงนี้',
-  'Claude returned an empty summary. Try again.': 'Claude ส่งสรุปว่างกลับมา ลองอีกครั้ง',
+
+  // Online AI (cloud_ai.dart)
+  'Online AI': 'AI ออนไลน์',
+  'Other': 'อื่นๆ',
+  'Writes summaries online with your own API key. It needs internet, and the transcript is sent to the service you set up.':
+      'สรุปโน้ตทางออนไลน์ด้วย API key ของคุณเอง ต้องใช้อินเทอร์เน็ต และบันทึกคำพูดจะถูกส่งไปยังบริการที่คุณตั้งค่าไว้',
+  'Writes summaries online with your own API key. It needs internet, and the transcript is sent to {company}.':
+      'สรุปโน้ตทางออนไลน์ด้วย API key ของคุณเอง ต้องใช้อินเทอร์เน็ต และบันทึกคำพูดจะถูกส่งไปที่ {company}',
+  'OpenRouter, Groq, DeepSeek, Ollama and more': 'OpenRouter, Groq, DeepSeek, Ollama และอื่นๆ',
+  'By {company}': 'โดย {company}',
+  'Other AI service': 'บริการ AI อื่น',
+  '{name} API key': '{name} API key',
+  'Saved on this phone · {model}': 'บันทึกบนมือถือแล้ว · {model}',
+  'Address': 'ที่อยู่ (URL)',
+  'API key (if needed)': 'API key (ถ้ามี)',
+  'Model': 'โมเดล',
+  'Leave as is unless you want a different model.': 'ไม่ต้องแก้ เว้นแต่อยากใช้โมเดลอื่น',
+  'Create a key at platform.openai.com under "API keys", then paste it here. It stays on this phone.':
+      'สร้าง key ที่ platform.openai.com ในหัวข้อ "API keys" แล้ววางที่นี่ key จะอยู่บนมือถือเครื่องนี้เท่านั้น',
+  'Create a key at aistudio.google.com under "Get API key", then paste it here. It stays on this phone.':
+      'สร้าง key ที่ aistudio.google.com ในหัวข้อ "Get API key" แล้ววางที่นี่ key จะอยู่บนมือถือเครื่องนี้เท่านั้น',
+  'Any service that works with the OpenAI API, such as OpenRouter, Groq, DeepSeek or Ollama. Enter its address, model and key. They stay on this phone.':
+      'บริการใดก็ได้ที่ใช้กับ OpenAI API ได้ เช่น OpenRouter, Groq, DeepSeek หรือ Ollama ใส่ที่อยู่ โมเดล และ key ข้อมูลจะอยู่บนมือถือเครื่องนี้เท่านั้น',
+  '{name} is summarizing… this can take a minute.': '{name} กำลังสรุป… อาจใช้เวลาสักครู่',
+  'Summarize with {name}': 'สรุปด้วย {name}',
+  'Set up the online AI in Settings → Notes AI first.': 'ตั้งค่า AI ออนไลน์ในตั้งค่า → AI ทำโน้ต ก่อน',
+  'Add your {name} API key first.': 'ใส่ {name} API key ก่อน',
+  '{name} took too long to answer. Try again.': '{name} ตอบช้าเกินไป ลองอีกครั้ง',
+  '{name} returned an error ({code}). Try again.': '{name} แจ้งข้อผิดพลาด ({code}) ลองอีกครั้ง',
+  'Your {name} API key is not valid. Check it in Settings → Notes AI.': '{name} API key ไม่ถูกต้อง ตรวจสอบในตั้งค่า → AI ทำโน้ต',
+  'The model "{model}" was not found. Change it in Settings → Notes AI.': 'ไม่พบโมเดล "{model}" เปลี่ยนได้ในตั้งค่า → AI ทำโน้ต',
+  '{name} is busy right now. Try again in a minute.': '{name} ไม่ว่างตอนนี้ ลองอีกครั้งในอีกสักครู่',
+  '{name} declined to summarize this recording.': '{name} ไม่สรุปเสียงนี้',
+  '{name} returned an empty summary. Try again.': '{name} ส่งสรุปว่างกลับมา ลองอีกครั้ง',
+
+  // Google account and shared locks (account.dart)
+  "Account":
+      "บัญชี",
+  "Lock all your devices together":
+      "ล็อกทุกเครื่องพร้อมกัน",
+  "Sign in with Google":
+      "เข้าสู่ระบบด้วย Google",
+  "Sign out":
+      "ออกจากระบบ",
+  "A lock started on any device signed in to this account locks the others too. If you lose your code, you can get one by email.":
+      "เมื่อเริ่มล็อกบนเครื่องใดที่ใช้บัญชีนี้ เครื่องอื่นจะล็อกด้วย ถ้าลืมรหัส ขอรหัสทางอีเมลได้",
+  "Sign in with the same account on each device. A lock started on one locks them all. Your lock settings are stored online so your devices can share them.":
+      "เข้าสู่ระบบด้วยบัญชีเดียวกันในทุกเครื่อง เมื่อเริ่มล็อกบนเครื่องหนึ่ง ทุกเครื่องจะล็อกด้วย การตั้งค่าล็อกจะถูกเก็บออนไลน์เพื่อให้ทุกเครื่องใช้ร่วมกัน",
+  "Forgot it? Email me a code":
+      "ลืมรหัส? ส่งรหัสทางอีเมล",
+  "Sent to {email}. The code works for {minutes} minutes.":
+      "ส่งไปที่ {email} แล้ว รหัสใช้ได้ {minutes} นาที",
+  "The code you chose when you started this session, or one emailed to you.":
+      "รหัสที่คุณตั้งตอนเริ่มเซสชันนี้ หรือรหัสที่ส่งทางอีเมล",
+  "Google didn't sign you in. Try again.":
+      "Google ยังไม่ได้ให้เข้าสู่ระบบ ลองอีกครั้ง",
+  "Couldn't sign in with Google ({code}).":
+      "เข้าสู่ระบบด้วย Google ไม่สำเร็จ ({code})",
+  "Add a Google account to this phone (Settings > Accounts), then try again.":
+      "เพิ่มบัญชี Google ในโทรศัพท์นี้ก่อน (การตั้งค่า > บัญชี) แล้วลองอีกครั้ง",
+  "Sign in with Google in Settings first.":
+      "เข้าสู่ระบบด้วย Google ในตั้งค่าก่อน",
+  "Pick {email}, the account this app is signed in with.":
+      "เลือก {email} ซึ่งเป็นบัญชีที่แอปนี้ใช้อยู่",
+  "The app needs permission to send the email. Try again and allow it.":
+      "แอปต้องได้รับอนุญาตให้ส่งอีเมล ลองอีกครั้งแล้วกดอนุญาต",
+  "Couldn't get permission to send email ({code}).":
+      "ขออนุญาตส่งอีเมลไม่สำเร็จ ({code})",
+  "No lock is running.":
+      "ไม่มีการล็อกอยู่ตอนนี้",
+  "Gmail took too long to answer. Try again.":
+      "Gmail ตอบช้าเกินไป ลองอีกครั้ง",
+  "Gmail refused to send the email. The Gmail API may be switched off for this app.":
+      "Gmail ไม่ยอมส่งอีเมล อาจยังไม่ได้เปิด Gmail API ให้แอปนี้",
+  "Gmail couldn't send the email ({code}). Try again.":
+      "Gmail ส่งอีเมลไม่สำเร็จ ({code}) ลองอีกครั้ง",
+  "Your Sati unlock code: {code}":
+      "รหัสปลดล็อก Sati ของคุณ: {code}",
+  "Your one-time code to end the lock is:\n\n{code}\n\nIt works for {minutes} minutes, on every device signed in to this account. Enter it where you would enter your own code.\n\nIf you didn't ask for this, someone with your phone did. The lock stays on unless the code is entered.":
+      "รหัสใช้ครั้งเดียวสำหรับปลดล็อกคือ:\n\n{code}\n\nใช้ได้ {minutes} นาที บนทุกเครื่องที่เข้าสู่ระบบด้วยบัญชีนี้ ใส่รหัสนี้ในช่องเดียวกับรหัสของคุณเอง\n\nถ้าคุณไม่ได้ขอรหัสนี้ แปลว่ามีคนอื่นขอจากมือถือของคุณ การล็อกจะยังคงอยู่จนกว่าจะมีคนใส่รหัส",
+
+  // Email and password sign-in (account_panel.dart)
+  "Use email and password":
+      "ใช้อีเมลและรหัสผ่าน",
+  "Emailed unlock codes need a Google sign-in. With email and password, keep your own code safe.":
+      "การส่งรหัสปลดล็อกทางอีเมลต้องเข้าสู่ระบบด้วย Google ถ้าใช้อีเมลและรหัสผ่าน ให้เก็บรหัสของคุณไว้ให้ดี",
+  "Create an account":
+      "สร้างบัญชี",
+  "Sign in with email":
+      "เข้าสู่ระบบด้วยอีเมล",
+  "Email":
+      "อีเมล",
+  "Password":
+      "รหัสผ่าน",
+  "At least 6 characters":
+      "อย่างน้อย 6 ตัวอักษร",
+  "Confirm password":
+      "ยืนยันรหัสผ่าน",
+  "Forgot password?":
+      "ลืมรหัสผ่าน?",
+  "I already have an account":
+      "มีบัญชีอยู่แล้ว",
+  "New here? Create an account":
+      "ยังไม่มีบัญชี? สร้างบัญชี",
+  "Create account":
+      "สร้างบัญชี",
+  "Sign in":
+      "เข้าสู่ระบบ",
+  "The passwords don't match.":
+      "รหัสผ่านไม่ตรงกัน",
+  "Enter your email first.":
+      "ใส่อีเมลก่อน",
+  "Check {email} for a link to choose a new password.":
+      "ดูอีเมล {email} เพื่อกดลิงก์ตั้งรหัสผ่านใหม่",
+  "That email address doesn't look right.":
+      "อีเมลนี้ดูไม่ถูกต้อง",
+  "There's already an account with this email. Sign in instead.":
+      "มีบัญชีที่ใช้อีเมลนี้อยู่แล้ว ให้เข้าสู่ระบบแทน",
+  "Choose a password of at least 6 characters.":
+      "ตั้งรหัสผ่านอย่างน้อย 6 ตัวอักษร",
+  "Wrong email or password.":
+      "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+  "Too many tries. Wait a few minutes and try again.":
+      "ลองหลายครั้งเกินไป รอสักครู่แล้วลองอีกครั้ง",
+  "Email sign-in isn't switched on for this app yet.":
+      "แอปนี้ยังไม่ได้เปิดการเข้าสู่ระบบด้วยอีเมล",
+  "Couldn't sign in ({code}).":
+      "เข้าสู่ระบบไม่สำเร็จ ({code})",
 
   // Durations
   '{n} min': '{n} นาที',

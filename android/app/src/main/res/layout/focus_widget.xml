@@ -31,7 +31,7 @@
             android:letterSpacing="0.18"
             android:textColor="#FFFFB547"
             android:textSize="12sp"
-            android:text="APLS" />
+            android:text="Sati" />
     </LinearLayout>
 
     <Chronometer

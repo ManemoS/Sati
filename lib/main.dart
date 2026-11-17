@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'account.dart';
 import 'app_shell.dart';
 import 'settings.dart';
 import 'theme.dart';
@@ -16,6 +17,7 @@ Future<void> main() async {
   });
   // Read before the first frame, so the right theme and tabs show straight away.
   await AppSettings.instance.load();
+  await Account.instance.init();
   runApp(const AppLockApp());
 }
 
@@ -30,7 +32,7 @@ class AppLockApp extends StatelessWidget {
         // Wording comes from `.tr`, which screens read as they build, so changing the language
         // rebuilds the whole app.
         key: ValueKey(AppSettings.instance.isThai),
-        title: 'APLS',
+        title: 'Sati',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,

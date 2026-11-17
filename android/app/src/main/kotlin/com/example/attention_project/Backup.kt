@@ -13,7 +13,7 @@ import java.util.zip.ZipOutputStream
  * Backs the app's data up into one .zip file, and restores it.
  *
  * The zip holds the lectures folder, the app's settings and plans (passed in from Flutter as
- * JSON), and the focus history. Secrets stay out: the Claude API key is never included (Flutter
+ * JSON), and the focus history. Secrets stay out: online AI API keys are never included (Flutter
  * leaves it out of the settings it passes), and neither are lock codes or a session in progress.
  */
 object Backup {
@@ -34,7 +34,7 @@ object Backup {
                 zip.write(text.toByteArray())
                 zip.closeEntry()
             }
-            put(MANIFEST, JSONObject().put("app", "APLS").put("version", 1).put("created", System.currentTimeMillis()).toString())
+            put(MANIFEST, JSONObject().put("app", "Sati").put("version", 1).put("created", System.currentTimeMillis()).toString())
             put(PREFS_ENTRY, settings)
             put(FOCUS_ENTRY, JSONObject()
                 .put("history", LockState.history(context))
@@ -75,7 +75,7 @@ object Backup {
                 val entry = zip.nextEntry ?: break
                 when {
                     entry.isDirectory -> Unit
-                    entry.name == MANIFEST -> valid = JSONObject(zip.readBytes().decodeToString()).optString("app") == "APLS"
+                    entry.name == MANIFEST -> valid = JSONObject(zip.readBytes().decodeToString()).optString("app") in listOf("Sati", "APLS")
                     entry.name == PREFS_ENTRY -> settings = zip.readBytes().decodeToString()
                     entry.name == FOCUS_ENTRY -> focus = zip.readBytes().decodeToString()
                     entry.name.startsWith(LECTURES) -> {
@@ -87,7 +87,7 @@ object Backup {
                 }
             }
         }
-        if (!valid) throw IllegalArgumentException("That isn't an APLS backup.")
+        if (!valid) throw IllegalArgumentException("That isn't a Sati backup.")
         focus?.let { mergeFocus(context, JSONObject(it)) }
         return settings ?: "{}"
     }

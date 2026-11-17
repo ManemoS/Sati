@@ -1,3 +1,3 @@
-# attention_project
+# Sati
 
 An app that can help students with their short attention span.
